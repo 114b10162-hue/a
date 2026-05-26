@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待辦事項 - To-Do List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(31, 38, 135, 0.3);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        #todoInput {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        #todoInput:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-add:active {
+            transform: translateY(0);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .filter-btn:hover {
+            border-color: #667eea;
+        }
+
+        .todos-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #e0e0e0;
+        }
+
+        .todo-item:hover {
+            background: #f0f1ff;
+            border-left-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .todo-item.completed {
+            opacity: 0.7;
+            border-left-color: #4caf50;
+        }
+
+        .todo-item.completed .todo-text {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .todo-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .todo-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .todo-text {
+            font-size: 1em;
+            color: #333;
+            word-break: break-word;
+            margin-bottom: 5px;
+        }
+
+        .todo-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: #999;
+        }
+
+        .todo-category {
+            display: inline-block;
+            padding: 3px 10px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 5px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: #ffc107;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #e83946;
+            color: white;
+        }
+
+        .btn-small:hover {
+            transform: scale(1.05);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h2 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 0.95em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-control {
+            flex: 1;
+            min-width: 120px;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .btn-control:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .btn-control.danger {
+            border-color: #e83946;
+            color: #e83946;
+        }
+
+        .btn-control.danger:hover {
+            background: #ffe0e0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-actions button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-actions .btn-save {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-actions .btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-actions button:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                border-radius: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            .btn-add {
+                width: 100%;
+            }
+
+            .todo-actions {
+                flex-direction: column;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        .scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f0f0f0;
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        .priority-high {
+            border-left-color: #e83946 !important;
+        }
+
+        .priority-medium {
+            border-left-color: #ffc107 !important;
+        }
+
+        .priority-low {
+            border-left-color: #4caf50 !important;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease;
+            z-index: 2000;
+            max-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid #4caf50;
+        }
+
+        .notification.error {
+            border-left: 4px solid #e83946;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✓ 待辦事項</h1>
+            <p>管理您的日常任務</p>
+        </div>
+
+        <div class="content">
+            <!-- 統計信息 -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">全部任務</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeCount">0</div>
+                    <div class="stat-label">進行中</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedCount">0</div>
+                    <div class="stat-label">已完成</div>
+                </div>
+            </div>
+
+            <!-- 輸入區域 -->
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="todoInput" 
+                    placeholder="添加新任務..."
+                    @keypress="handleKeyPress"
+                >
+                <button class="btn btn-add" onclick="addTodo()">
+                    <span>➕</span> 添加
+                </button>
+            </div>
+
+            <!-- 篩選按鈕 -->
+            <div class="filters">
+                <button class="filter-btn active" onclick="setFilter('all')">全部</button>
+                <button class="filter-btn" onclick="setFilter('active')">進行中</button>
+                <button class="filter-btn" onclick="setFilter('completed')">已完成</button>
+            </div>
+
+            <!-- 待辦事項列表 -->
+            <div class="todos-list scrollbar" id="todosList"></div>
+
+            <!-- 空狀態 -->
+            <div class="empty-state" id="emptyState">
+                <div class="empty-state-icon">📋</div>
+                <h2>還沒有任務</h2>
+                <p>開始添加您的第一個任務吧！</p>
+            </div>
+
+            <!-- 控制按鈕 -->
+            <div class="controls">
+                <button class="btn-control" onclick="exportTodos()">💾 導出</button>
+                <button class="btn-control" onclick="importTodos()">📥 導入</button>
+                <button class="btn-control danger" onclick="clearCompleted()">🗑️ 清除已完成</button>
+                <button class="btn-control danger" onclick="clearAll()">🔴 清除全部</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 編輯模態框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">添加新任務</h2>
+            <form onsubmit="saveTodo(event)">
+                <div class="form-group">
+                    <label for="editText">任務名稱 *</label>
+                    <input type="text" id="editText" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDesc">描述</label>
+                    <textarea id="editDesc"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">分類</label>
+                    <select id="editCategory">
+                        <option value="">無</option>
+                        <option value="工作">工作</option>
+                        <option value="個人">個人</option>
+                        <option value="購物">購物</option>
+                        <option value="健康">健康</option>
+                        <option value="其他">其他</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editPriority">優先級</label>
+                    <select id="editPriority">
+                        <option value="low">低</option>
+                        <option value="medium" selected>中</option>
+                        <option value="high">高</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editDueDate">截止日期</label>
+                    <input type="date" id="editDueDate">
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-save">保存</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">取消</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 隱藏的文件輸入 -->
+    <input type="file" id="fileInput" style="display: none;" accept=".json">
+
+    <script>
+        let todos = [];
+        let currentFilter = 'all';
+        let editingId = null;
+
+        // 初始化
+        function init() {
+            loadTodos();
+            renderTodos();
+            document.getElementById('todoInput').focus();
+        }
+
+        // 本地存儲：加載待辦事項
+        function loadTodos() {
+            try {
+                const saved = localStorage.getItem('todos');
+                todos = saved ? JSON.parse(saved) : [];
+            } catch (error) {
+                console.error('加載待辦事項失敗:', error);
+                todos = [];
+            }
+        }
+
+        // 本地存儲：保存待辦事項
+        function saveTodosToStorage() {
+            try {
+                localStorage.setItem('todos', JSON.stringify(todos));
+            } catch (error) {
+                console.error('保存待辦事項失敗:', error);
+                showNotification('保存失敗', 'error');
+            }
+        }
+
+        // 添加任務
+        function addTodo() {
+            const input = document.getElementById('todoInput');
+            const text = input.value.trim();
+
+            if (!text) {
+                showNotification('請輸入任務名稱', 'error');
+                return;
+            }
+
+            openModal(null);
+            input.value = '';
+        }
+
+        // 打開編輯模態框
+        function openModal(id) {
+            const modal = document.getElementById('editModal');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            if (id) {
+                editingId = id;
+                const todo = todos.find(t => t.id === id);
+                modalTitle.textContent = '編輯任務';
+                document.getElementById('editText').value = todo.text;
+                document.getElementById('editDesc').value = todo.description || '';
+                document.getElementById('editCategory').value = todo.category || '';
+                document.getElementById('editPriority').value = todo.priority || 'medium';
+                document.getElementById('editDueDate').value = todo.dueDate || '';
+            } else {
+                editingId = null;
+                modalTitle.textContent = '添加新任務';
+                document.getElementById('editText').value = document.getElementById('todoInput').value;
+                document.getElementById('editDesc').value = '';
+                document.getElementById('editCategory').value = '';
+                document.getElementById('editPriority').value = 'medium';
+                document.getElementById('editDueDate').value = '';
+            }
+            
+            modal.classList.add('active');
+            document.getElementById('editText').focus();
+        }
+
+        // 關閉模態框
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingId = null;
+        }
+
+        // 保存任務
+        function saveTodo(event) {
+            event.preventDefault();
+            
+            const text = document.getElementById('editText').value.trim();
+            const desc = document.getElementById('editDesc').value.trim();
+            const category = document.getElementById('editCategory').value;
+            const priority = document.getElementById('editPriority').value;
+            const dueDate = document.getElementById('editDueDate').value;
+
+            if (!text) {
+                showNotification('請輸入任務名稱', 'error');
+                return;
+            }
+
+            if (editingId) {
+                // 編輯現有任務
+                const todo = todos.find(t => t.id === editingId);
+                todo.text = text;
+                todo.description = desc;
+                todo.category = category;
+                todo.priority = priority;
+                todo.dueDate = dueDate;
+                showNotification('任務已更新', 'success');
+            } else {
+                // 創建新任務
+                const newTodo = {
+                    id: Date.now(),
+                    text: text,
+                    description: desc,
+                    category: category,
+                    priority: priority,
+                    dueDate: dueDate,
+                    completed: false,
+                    createdAt: new Date().toLocaleString('zh-CN')
+                };
+                todos.push(newTodo);
+                showNotification('任務已添加', 'success');
+            }
+
+            saveTodosToStorage();
+            renderTodos();
+            closeModal();
+            document.getElementById('todoInput').value = '';
+            document.getElementById('todoInput').focus();
+        }
+
+        // 切換任務完成狀態
+        function toggleTodo(id) {
+            const todo = todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveTodosToStorage();
+                renderTodos();
+            }
+        }
+
+        // 刪除任務
+        function deleteTodo(id) {
+            if (confirm('確定要刪除此任務嗎？')) {
+                todos = todos.filter(t => t.id !== id);
+                saveTodosToStorage();
+                renderTodos();
+                showNotification('任務已刪除', 'success');
+            }
+        }
+
+        // 設置篩選
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            renderTodos();
+        }
+
+        // 清除已完成的任務
+        function clearCompleted() {
+            const completed = todos.filter(t => t.completed).length;
+            if (completed === 0) {
+                showNotification('沒有已完成的任務', 'error');
+                return;
+            }
+            if (confirm(`確定要清除 ${completed} 個已完成的任務嗎？`)) {
+                todos = todos.filter(t => !t.completed);
+                saveTodosToStorage();
+                renderTodos();
+                showNotification('已完成任務已清除', 'success');
+            }
+        }
+
+        // 清除全部任務
+        function clearAll() {
+            if (todos.length === 0) {
+                showNotification('沒有任務可清除', 'error');
+                return;
+            }
+            if (confirm('確定要清除所有任務嗎？此操作無法撤銷！')) {
+                todos = [];
+                saveTodosToStorage();
+                renderTodos();
+                showNotification('所有任務已清除', 'success');
+            }
+        }
+
+        // 導出任務
+        function exportTodos() {
+            if (todos.length === 0) {
+                showNotification('沒有任務可導出', 'error');
+                return;
+            }
+            const dataStr = JSON.stringify(todos, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `todos_${new Date().toISOString().slice(0, 10)}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+            showNotification('任務已導出', 'success');
+        }
+
+        // 導入任務
+        function importTodos() {
+            document.getElementById('fileInput').click();
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const imported = JSON.parse(event.target.result);
+                    if (!Array.isArray(imported)) {
+                        throw new Error('文件格式不正確');
+                    }
+                    if (confirm('確定要導入這些任務嗎？（將覆蓋現有任務）')) {
+                        todos = imported;
+                        saveTodosToStorage();
+                        renderTodos();
+                        showNotification(`已導入 ${imported.length} 個任務`, 'success');
+                    }
+                } catch (error) {
+                    showNotification('導入失敗: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+        });
+
+        // 渲染待辦事項
+        function renderTodos() {
+            const list = document.getElementById('todosList');
+            const empty = document.getElementById('emptyState');
+
+            // 篩選任務
+            let filtered = todos;
+            if (currentFilter === 'active') {
+                filtered = todos.filter(t => !t.completed);
+            } else if (currentFilter === 'completed') {
+                filtered = todos.filter(t => t.completed);
+            }
+
+            // 按優先級排序
+            filtered.sort((a, b) => {
+                const priorityOrder = { high: 0, medium: 1, low: 2 };
+                return priorityOrder[a.priority || 'medium'] - priorityOrder[b.priority || 'medium'];
+            });
+
+            // 更新統計
+            updateStats();
+
+            // 顯示或隱藏空狀態
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+
+            // 渲染任務列表
+            list.innerHTML = filtered.map(todo => `
+                <div class="todo-item ${todo.completed ? 'completed' : ''} priority-${todo.priority || 'medium'}">
+                    <input 
+                        type="checkbox" 
+                        class="todo-checkbox" 
+                        ${todo.completed ? 'checked' : ''}
+                        onchange="toggleTodo(${todo.id})"
+                    >
+                    <div class="todo-content">
+                        <div class="todo-text">${escapeHtml(todo.text)}</div>
+                        <div class="todo-meta">
+                            ${todo.category ? `<span class="todo-category">${escapeHtml(todo.category)}</span>` : ''}
+                            ${todo.dueDate ? `<span>📅 ${todo.dueDate}</span>` : ''}
+                            ${todo.description ? `<span>📝 ${escapeHtml(todo.description.substring(0, 30))}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="todo-actions">
+                        <button class="btn-small btn-edit" onclick="openModal(${todo.id})">編輯</button>
+                        <button class="btn-small btn-delete" onclick="deleteTodo(${todo.id})">刪除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 更新統計信息
+        function updateStats() {
+            document.getElementById('totalCount').textContent = todos.length;
+            document.getElementById('activeCount').textContent = todos.filter(t => !t.completed).length;
+            document.getElementById('completedCount').textContent = todos.filter(t => t.completed).length;
+        }
+
+        // 顯示通知
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // HTML 轉義
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 按 Enter 鍵添加任務
+        document.getElementById('todoInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addTodo();
+            }
+        });
+
+        // 點擊模態框外部關閉
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // 初始化應用
+        init();
+    </script>
+</body>
+</html>
