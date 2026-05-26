@@ -1,0 +1,254 @@
+# 漫畫配置文件
+
+此配置文件用於 baoyu-comic AI Agent 的高級設置。
+
+## 基本配置
+
+```yaml
+# 項目信息
+project:
+  title: "醫院評鑑管理漫畫"
+  author: "醫院品質管理團隊"
+  description: "通過少女漫畫風格介紹醫院評鑑管理的核心概念"
+  language: "zh"  # 中文
+
+# 目標受眾
+target_audience:
+  - "醫院員工"
+  - "患者和家屬"
+  - "一般公眾"
+
+# 內容類型
+content_type: "educational"  # 教育類
+```
+
+## 視覺風格配置
+
+```yaml
+# 畫風（Art Style）
+art:
+  style: "manga"              # 日漫風格
+  tone: "romantic"            # 浪漫溫暖基調
+  layout: "standard"          # 標準 4-6 分鏡
+
+# 視覺元素
+visual:
+  color_palette: "pastel"     # 柔和色系
+  decorative_elements: true   # 啟用裝飾元素（花卉、星星等）
+  character_expressions: "detailed"  # 詳細的表情描繪
+  eye_style: "large"          # 大眼睛風格
+
+# 頁面設置
+page:
+  aspect_ratio: "3:4"         # 豎版
+  pages: 6                    # 共 6 頁
+  resolution: "high"          # 高清晰度
+```
+
+## 內容結構配置
+
+```yaml
+# 故事結構
+story_structure:
+  opening: "醫院開場"
+  act1: "評鑑意義與標準"
+  act2: "準備階段的挑戰"
+  climax: "評鑑現場"
+  resolution: "反饋與改善"
+  ending: "邁向卓越"
+
+# 關鍵主題
+themes:
+  - "專業性"
+  - "溫暖人心"
+  - "持續改進"
+  - "患者至上"
+
+# 教育重點
+educational_focus:
+  - "評鑑的四大支柱"
+  - "改善的正面意義"
+  - "團隊合作精神"
+  - "醫療品質"
+```
+
+## 角色配置
+
+```yaml
+# 主要角色
+characters:
+  - name: "李醫生"
+    role: "院長"
+    traits:
+      - "沉著"
+      - "親切"
+      - "有遠見"
+    appearance:
+      - "白大衣"
+      - "溫暖的表情"
+      
+  - name: "王博士"
+    role: "評鑑專家"
+    traits:
+      - "專業"
+      - "公正"
+      - "建設性"
+    appearance:
+      - "正式著裝"
+      - "認真的表情"
+      
+  - name: "陳主任"
+    role: "品質管理部主任"
+    traits:
+      - "幹練"
+      - "細心"
+      - "組織能力強"
+      
+  - name: "一線員工"
+    role: "護士、醫生等"
+    traits:
+      - "敬業"
+      - "樂觀"
+      - "願意改進"
+```
+
+## 分鏡板配置
+
+```yaml
+# 分鏡風格
+panels:
+  composition: "balanced"     # 均衡的分鏡構圖
+  action_lines: true          # 啟用速度線（適度）
+  narrative_flow: "smooth"    # 流暢的敘事
+  transitions: "creative"     # 創意過場
+
+# 對話風格
+dialogue:
+  style: "natural"            # 自然親切
+  text_boxes: "rounded"       # 圓角氣泡框
+  emphasis: "emotional"       # 情感強調
+```
+
+## 色彩配置
+
+```yaml
+# 配色方案（少女漫畫風格）
+colors:
+  primary:
+    - "#FFB6C1"   # 淡粉色
+    - "#DDA0DD"   # 淡紫色
+    - "#FFE4E1"   # 蜜桃粉
+  
+  secondary:
+    - "#E6F3FF"   # 淡藍色
+    - "#F0FFF0"   # 淡綠色
+  
+  accent:
+    - "#FFD700"   # 金色（強調）
+    - "#FF69B4"   # 熱粉紅（重點）
+  
+  neutral:
+    - "#FFFFFF"   # 白色（背景）
+    - "#F5F5F5"   # 淺灰色
+    - "#333333"   # 深灰色（線條）
+
+# 色彩使用指南
+color_usage:
+  backgrounds: "light_pastel"  # 淺色柔和背景
+  characters: "vibrant"         # 人物用鮮艷色
+  highlights: "accent_colors"   # 高亮用強調色
+  medical_elements: "professional"  # 醫療元素保持專業
+```
+
+## 輸出配置
+
+```yaml
+# 輸出設置
+output:
+  format:
+    - "png"        # 單頁 PNG
+    - "pdf"        # PDF 完整文檔
+    - "pptx"       # PowerPoint 幻燈片
+  
+  resolution: "300dpi"   # 打印質量
+  
+  file_naming:
+    pattern: "hospital-accreditation-comic-page-{number}.png"
+    start_index: 1
+
+# 批量處理
+batch:
+  enabled: true
+  concurrent_jobs: 4
+  output_directory: "./output/"
+```
+
+## 審核清單
+
+```yaml
+# 生成後審核項目
+quality_checklist:
+  visual:
+    - "分鏡構圖是否平衡"
+    - "角色表情是否生動"
+    - "色彩搭配是否和諧"
+    - "裝飾元素是否適度"
+  
+  content:
+    - "故事邏輯是否清晰"
+    - "教育重點是否突出"
+    - "對話是否自然流暢"
+    - "6 頁故事是否完整"
+  
+  medical:
+    - "醫療知識是否準確"
+    - "專業術語是否恰當"
+    - "醫療流程是否合理"
+  
+  cultural:
+    - "少女漫畫風格是否適當"
+    - "人文關懷是否體現"
+    - "正能量是否充分"
+```
+
+## 進階選項
+
+```yaml
+# 特殊效果
+effects:
+  speed_lines: true
+  emotional_symbols: true      # 淚水、粉紅心等
+  lighting_effects: subtle
+  blur_background: true        # 背景適度模糊
+  focus_highlight: true        # 重點突出
+
+# 對話框風格
+text_styling:
+  font_style: "manga"          # 漫畫字體
+  emphasis: "varied"           # 字體大小、粗細變化
+  onomatopoeia: true           # 擬音詞
+  
+# 敘述風格
+narration:
+  style: "omniscient"          # 全知視角
+  tone: "inspiring"            # 勵志基調
+  cultural_references: "minimal"  # 避免過多文化參考
+```
+
+## 使用此配置
+
+要使用此配置生成漫畫，運行：
+
+```bash
+/baoyu-comic content/script.md --config config/comic-config.yml --lang zh
+```
+
+或簡化命令：
+
+```bash
+/baoyu-comic content/script.md --style shoujo --lang zh
+```
+
+---
+
+**注**：此配置是推薦設置。可根據實際需求進行調整。
